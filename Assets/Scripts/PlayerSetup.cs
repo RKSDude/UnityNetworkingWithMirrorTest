@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 
+[RequireComponent(typeof(PlayerManager))]
 public class PlayerSetup : NetworkBehaviour
 {
     [SerializeField] Behaviour[] componentsToDisable;
@@ -24,6 +25,15 @@ public class PlayerSetup : NetworkBehaviour
         }
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+
+        string _netID = GetComponent<NetworkIdentity>().netId.ToString();
+        PlayerManager _player = GetComponent<PlayerManager>();
+        GameManager.registerPlayer(_netID, _player);
+    }
+
     private void assignLayer()
     {
         gameObject.layer = LayerMask.NameToLayer(remoteLayer);
@@ -43,5 +53,7 @@ public class PlayerSetup : NetworkBehaviour
         {
             sceneCamera.gameObject.SetActive(true);
         }
+
+        GameManager.unRegisterPlayer(transform.name);
     }
 }
