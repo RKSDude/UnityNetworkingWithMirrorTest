@@ -1,5 +1,3 @@
-using UnityEngine;
-
 [System.Serializable] public class PlayerWeapon
 {
     public string weaponName = "gun";

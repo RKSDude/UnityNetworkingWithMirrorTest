@@ -16,6 +16,7 @@ public class PlayerShoot : NetworkBehaviour
         }
     }
 
+    //[Client] attribute makes sure server doesn't run Shoot()
     [Client] private void Shoot()
     {
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, weapon.weaponRange, mask))
@@ -27,12 +28,13 @@ public class PlayerShoot : NetworkBehaviour
         }
     }
 
+    //[Command] attribute runs funtion on server
     [Command] private void cmdPlayerShot(string playerID, float damage)
     {
         Debug.Log(playerID + " has been shot");
 
         PlayerManager player = GameManager.getPlayer(playerID);
-        player.takeDamage(damage);
+        player.rpcTakeDamage(damage);
     }
 
 }

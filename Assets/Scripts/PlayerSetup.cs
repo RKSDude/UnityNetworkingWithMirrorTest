@@ -10,6 +10,9 @@ public class PlayerSetup : NetworkBehaviour
 
     private void Start()
     {
+        //Disable other player's component so local inputs don't 
+        //make the other player do stuff
+        //also assign layers
         if(!isLocalPlayer)
         {
             disableComponents();
@@ -17,12 +20,16 @@ public class PlayerSetup : NetworkBehaviour
         }
         else
         {
+            //disable scene camera if local player
             sceneCamera = Camera.main;
             if(sceneCamera != null)
             {
                 sceneCamera.gameObject.SetActive(false);
             }
         }
+        
+        //call setup method in PlayerManager
+        GetComponent<PlayerManager>().Setup();
     }
 
     public override void OnStartClient()
@@ -47,7 +54,8 @@ public class PlayerSetup : NetworkBehaviour
         }
     }
 
-    private void onDisable()
+    //activate sceneCamera when player disconnects
+    private void OnDisable()
     {
         if(sceneCamera != null)
         {
