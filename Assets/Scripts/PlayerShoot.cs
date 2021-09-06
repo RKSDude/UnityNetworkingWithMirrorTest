@@ -16,12 +16,23 @@ public class PlayerShoot : NetworkBehaviour
         }
     }
 
-    private void Shoot()
+    [Client] private void Shoot()
     {
         if(Physics.Raycast(cam.transform.position, cam.transform.forward, out _hit, weapon.weaponRange, mask))
         {
-            Debug.Log("We hit: " + _hit.collider.name);
+            if(_hit.collider.tag == "Player") 
+            {
+                cmdPlayerShot(_hit.collider.name, weapon.weaponDamage);
+            }
         }
+    }
+
+    [Command] private void cmdPlayerShot(string playerID, float damage)
+    {
+        Debug.Log(playerID + " has been shot");
+
+        PlayerManager player = GameManager.getPlayer(playerID);
+        player.takeDamage(damage);
     }
 
 }
