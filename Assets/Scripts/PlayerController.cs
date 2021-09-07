@@ -1,11 +1,14 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(PlayerMotor))]
 [RequireComponent(typeof(ConfigurableJoint))]
+
 public class PlayerController : MonoBehaviour
 {
     private PlayerMotor motor;
     private ConfigurableJoint joint;
+    private Animator anim;
 
     [SerializeField] private float speed = 5f;
     [SerializeField] private float sensitivity = 10f;
@@ -20,21 +23,26 @@ public class PlayerController : MonoBehaviour
     {
         motor = GetComponent<PlayerMotor>();
         joint = GetComponent<ConfigurableJoint>();
+        anim = GetComponent<Animator>();
 
         SetJointSettings(jointSpring);
     }
 
     private void Update()
     {
+        #region Movement Calculations
         //XZ Movement
-        float xMovement = Input.GetAxisRaw("Horizontal");
-        float zMovement = Input.GetAxisRaw("Vertical");
+        float xMovement = Input.GetAxis("Horizontal");
+        float zMovement = Input.GetAxis("Vertical");
 
         Vector3 moveHorizontal = transform.right * xMovement;
         Vector3 moveVertical = transform.forward * zMovement;
 
-        Vector3 _velocity = (moveHorizontal + moveVertical).normalized * speed;
+        Vector3 _velocity = (moveHorizontal + moveVertical) * speed;
         motor.Move(_velocity);
+
+        //Animator movement
+        anim.SetFloat("ForwardVelocity", zMovement);
 
         //Y Rotation (LEFT/RIGHT ROTATION NOT VERTICAL (rotation about the Y axis))
         float yRotation = Input.GetAxisRaw("Mouse X");
@@ -64,6 +72,9 @@ public class PlayerController : MonoBehaviour
         }
 
         motor.Thrust(_thrusterForce);
+        #endregion
+
+
     }
 
     private void SetJointSettings(float _jointSpring)

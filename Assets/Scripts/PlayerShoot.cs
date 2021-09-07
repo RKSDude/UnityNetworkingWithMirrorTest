@@ -5,6 +5,7 @@ public class PlayerShoot : NetworkBehaviour
 {
     [SerializeField] private Camera cam;
     [SerializeField] private LayerMask mask;
+    
     private RaycastHit _hit;
     public PlayerWeapon weapon;
     
