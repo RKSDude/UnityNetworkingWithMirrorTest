@@ -12,12 +12,12 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - LocalPlayer
+  - RemotePlayer
   - Lighting
   - Ground
   - Postprocessing
-  - 
+  - DontDraw
   - 
   - 
   - 
