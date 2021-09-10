@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 
     //makes sure there is only one GameManager file in a given scene
     public static GameManager instance;
+
+    [SerializeField] private GameObject sceneCamera;
+
     private void Awake()
     {
         if(instance != null)
@@ -18,6 +21,16 @@ public class GameManager : MonoBehaviour
             instance = this;
         }
         
+    }
+
+    public void setSceneCamera(bool _isActive)
+    {
+        if(sceneCamera == null)
+        {
+            return;
+        }
+
+        sceneCamera.SetActive(_isActive);
     }
 
     #region Player registering

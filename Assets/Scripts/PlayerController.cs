@@ -9,10 +9,19 @@ public class PlayerController : MonoBehaviour
     private PlayerMotor motor;
     private ConfigurableJoint joint;
     private Animator anim;
+    private RaycastHit hit;
 
     [SerializeField] private float speed = 5f;
     [SerializeField] private float sensitivity = 10f;
     [SerializeField] private float thrustForce = 1000f;
+    [SerializeField] private float thrustFuelBurn = 1f;
+    [SerializeField] private float thrustFuelRegen = 0.3f;
+    
+    private float thrustFuelAmount = 1f;
+    public float GetFuelAmount()
+    {
+        return thrustFuelAmount;
+    }
 
     [Header("Joint options")]
     [SerializeField] private float jointSpring = 10f;    
@@ -29,6 +38,15 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if(Physics.Raycast(transform.position, Vector3.down, out hit, 100f))
+        {
+            joint.targetPosition = new Vector3(0f, -hit.point.y, 0f);
+        }
+        else
+        {
+            joint.targetPosition = new Vector3(0f, 0f, 0f);
+        }
+
         #region Movement Calculations
         //XZ Movement
         float xMovement = Input.GetAxis("Horizontal");
@@ -60,20 +78,27 @@ public class PlayerController : MonoBehaviour
         //thruster stuff
         Vector3 _thrusterForce = Vector3.zero;
 
-        if(Input.GetButton("Jump"))
+        if(Input.GetButton("Jump") && thrustFuelAmount > 0)
         {
-            _thrusterForce = Vector3.up * thrustForce;
-            SetJointSettings(0f);
+            thrustFuelAmount -= thrustFuelBurn * Time.deltaTime;
+
+            if(thrustFuelAmount > 0.01f)
+            {
+                _thrusterForce = Vector3.up * thrustForce;
+                SetJointSettings(0f);
+            }
         }
         else
         {
+            thrustFuelAmount += thrustFuelRegen * Time.deltaTime;
+
             SetJointSettings(jointSpring);
         }
 
+        thrustFuelAmount = Mathf.Clamp(thrustFuelAmount, 0f, 1f);
+
         motor.Thrust(_thrusterForce);
         #endregion
-
-
     }
 
     private void SetJointSettings(float _jointSpring)
